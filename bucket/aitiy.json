@@ -4,16 +4,31 @@
     "version": "1.0.10",
     "license": "Freeware",
     "notes": [
-        "Portable mode: create a folder named .aitiy beside Aitiy.exe to store settings there.",
-        "Settings are opened from the Aitiy menu in the notification area."
+        "Aitiy runs in the notification area; open Settings from its tray menu.",
+        "This manifest keeps Aitiy in portable mode so that settings survive upgrades. Portable mode is enabled by the presence of the .aitiy folder."
     ],
-    "url": "https://aitiy.com/aitiy.zip",
-    "hash": "199eb0c8f32b10bc61e413775105a107961a251d42c8c9f8bdf398eb91fd8b9f",
+    "architecture": {
+        "64bit": {
+            "url": "https://aitiy.com/aitiy.zip",
+            "hash": "199eb0c8f32b10bc61e413775105a107961a251d42c8c9f8bdf398eb91fd8b9f"
+        }
+    },
+    "shortcuts": [
+        [
+            "Aitiy.exe",
+            "Aitiy"
+        ]
+    ],
+    "persist": ".aitiy",
     "checkver": {
         "url": "https://aitiy.com/releases.js",
         "re": "\"version\": \"([\\d.]+)\""
     },
     "autoupdate": {
-        "url": "https://aitiy.com/aitiy.zip"
+        "architecture": {
+            "64bit": {
+                "url": "https://aitiy.com/aitiy.zip"
+            }
+        }
     }
 }
