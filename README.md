@@ -1,42 +1,60 @@
-# Scoop Bucket Template
+# ScoopBuckets
 
-<!-- Uncomment the following line after replacing placeholders -->
-<!-- [![Tests](https://github.com/<username>/<bucketname>/actions/workflows/ci.yml/badge.svg)](https://github.com/<username>/<bucketname>/actions/workflows/ci.yml) [![Excavator](https://github.com/<username>/<bucketname>/actions/workflows/excavator.yml/badge.svg)](https://github.com/<username>/<bucketname>/actions/workflows/excavator.yml) -->
+[![Tests](https://github.com/kdqiu/ScoopBuckets/actions/workflows/ci.yml/badge.svg)](https://github.com/kdqiu/ScoopBuckets/actions/workflows/ci.yml) [![Excavator](https://github.com/kdqiu/ScoopBuckets/actions/workflows/excavator.yml/badge.svg)](https://github.com/kdqiu/ScoopBuckets/actions/workflows/excavator.yml)
 
-Template bucket for [Scoop](https://scoop.sh), the Windows command-line installer.
+Personal [Scoop](https://scoop.sh) bucket for Windows command-line installer.
 
-## How do I use this template?
+## Available manifests
 
-1. Generate your own copy of this repository with the "Use this template"
-   button.
-2. Allow all GitHub Actions:
-   - Navigate to `Settings` - `Actions` - `General` - `Actions permissions`.
-   - Select `Allow all actions and reusable workflows`.
-   - Then `Save`.
-3. Workflow permissions:
-   - Navigate to `Settings` - `Actions` - `General` - `Workflow permissions`.
-   - Ensure `Read repository contents and packages permissions` is selected.
-   - Then `Save`.
-4. Document the bucket in `README.md`.
-5. Replace the placeholder repository string in `bin/auto-pr.ps1`.
-6. Create new manifests by copying `bucket/app-name.json.template` to
-   `bucket/<app-name>.json`.
-7. Commit and push changes.
-8. If you'd like your bucket to be indexed on `https://scoop.sh`, add the
-   topic `scoop-bucket` to your repository.
+| Manifest | Description | Version |
+| --- | --- | --- |
+| [centbrowser](bucket/centbrowser.json) | Cent Browser — The Most Feature Rich Chromium | 5.3.1184.25 |
 
 ## How do I install these manifests?
 
-After manifests have been committed and pushed, run the following:
+Add the bucket, then install by manifest name:
 
 ```pwsh
-scoop bucket add <bucketname> https://github.com/<username>/<bucketname>
-scoop install <bucketname>/<manifestname>
+scoop bucket add ScoopBuckets https://github.com/kdqiu/ScoopBuckets
+scoop install ScoopBuckets/centbrowser
+```
+
+To uninstall:
+
+```pwsh
+scoop uninstall centbrowser
 ```
 
 ## How do I contribute new manifests?
 
-To make a new manifest contribution, please read the [Contributing
-Guide](https://github.com/ScoopInstaller/.github/blob/main/.github/CONTRIBUTING.md)
-and [App Manifests](https://github.com/ScoopInstaller/Scoop/wiki/App-Manifests)
-wiki page.
+1. Enable GitHub Actions for the repository:
+   - `Settings` → `Actions` → `General` → `Actions permissions`
+   - Select `Allow all actions and reusable workflows`, then `Save`
+2. Copy `bucket/app-name.json.template` to `bucket/<app-name>.json`
+   and fill in the fields. See the [App Manifests](https://github.com/ScoopInstaller/Scoop/wiki/App-Manifests)
+   wiki page for the full specification.
+3. Verify the manifest locally with the helper scripts. Note that they all
+   operate on the whole `bucket/` directory:
+
+```pwsh
+.\bin\formatjson.ps1
+.\bin\checkver.ps1
+.\bin\checkurls.ps1
+```
+
+4. Commit and push. CI will validate the manifest and open a PR.
+5. To keep the bucket indexed on `https://scoop.sh`, add the repository
+   topic `scoop-bucket`.
+
+### Updating manifests
+
+The `Excavator` workflow polls each manifest's `checkver` URL every 4 hours
+and opens a Pull Request when a new version is detected. To do the same
+locally:
+
+```pwsh
+.\bin\auto-pr.ps1
+```
+
+The upstream target defaults to `kdqiu/ScoopBuckets:master` and can be
+overridden: `.\bin\auto-pr.ps1 -upstream <username>/<bucketname>:<branch>`.
