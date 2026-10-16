@@ -1,0 +1,19 @@
+{
+    "homepage": "https://aitiy.com/",
+    "description": "Desktop productivity tool with mouse gestures, hotkeys, screenshots and OCR",
+    "version": "1.0.10",
+    "license": "Freeware",
+    "notes": [
+        "Portable mode: create a folder named .aitiy beside Aitiy.exe to store settings there.",
+        "Settings are opened from the Aitiy menu in the notification area."
+    ],
+    "url": "https://aitiy.com/aitiy.zip",
+    "hash": "199eb0c8f32b10bc61e413775105a107961a251d42c8c9f8bdf398eb91fd8b9f",
+    "checkver": {
+        "url": "https://aitiy.com/releases.js",
+        "re": "\"version\": \"([\\d.]+)\""
+    },
+    "autoupdate": {
+        "url": "https://aitiy.com/aitiy.zip"
+    }
+}

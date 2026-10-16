@@ -8,6 +8,7 @@
 
 | 清单 | 说明 | 版本 |
 | --- | --- | --- |
+| [aitiy](bucket/aitiy.json) | Aitiy — 集成鼠标手势、快捷键、截图与OCR 的桌面效率工具 | 1.0.10 |
 | [centbrowser](bucket/centbrowser.json) | Cent Browser — 功能最丰富的 Chromium 内核浏览器 | 5.3.1184.25 |
 
 ## 如何安装
