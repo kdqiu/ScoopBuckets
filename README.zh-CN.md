@@ -94,3 +94,87 @@ scoop uninstall centbrowser
 
 `license` 优先使用 SPDX 标识符，如 `MIT`、`Apache-2.0`。`Freeware`、`Proprietary`、
 `Shareware`、`Unknown` 只在没有合适标准标识符时作为兜底值使用。
+
+## 保持版本稳定
+
+软件装好后往往还会自己更新，或是被 Scoop 顺带升级。三条通道需要分别处理。
+
+### 阻止软件自我更新
+
+应用自带的更新器不受 Scoop 管理，一旦它把文件换了，Scoop 记录的哈希就与磁盘
+上的实际内容不一致，下次 `scoop update` 会直接报错。可选手段按侵入性从低到高：
+
+| 手段 | 适用场景 | 代价 |
+| --- | --- | --- |
+| 写配置项关闭自动检查 | 应用提供设置项 | 需知道具体配置键 |
+| 删除独立更新程序 | 包内含 `updater.exe` 之类 | 文件被删后功能可能异常 |
+| `pre_install` 拦截 | 应用启动时才检查 | 每次安装都重跑 |
+| 阻断网络 | 应用只走 HTTP 检查 | 影响其他功能 |
+| `pre_uninstall` 清理 | 自更新已发生 | 事后补救 |
+
+**优先用配置项，其次才动文件。** 删除更新程序会让应用在某些路径下报错，
+而配置项是可逆的、不会破坏安装完整性。
+
+针对本仓库的两个清单，实际情况不同：
+
+**Cent Browser** — Chromium 内核，官方 FAQ 明确：每 6 小时检查一次更新，
+设置位于「其他设置」→「自动更新 Cent Browser」。它会写注册表
+`HKEY_CURRENT_USER\SOFTWARE\CentBrowser`，便携版则另有
+`centbrowserupdater.exe` 负责更新。由于 Chromium 系还支持组策略，
+用 `post_install` 写入 `Local State` 的 `browser.enabled_labs_experiments`
+或注册表策略键更稳妥；若使用安装版，还提供了 `--cb-auto-update` 参数。
+
+**Aitiy** — 单文件应用，安装包内**只有 `Aitiy.exe` 与 `AitiyOcr.dll`，
+不含任何独立更新程序**。更新检查由主程序自身发起（请求带
+`Aitiy Update Check/1.0` 标识，指向 `aitiy.com`），并有 `UpdateTipProgress`
+更新提示界面。因此「删除独立更新程序」这一手段对它不适用。
+
+对 Aitiy 有效的做法是：在 `post_install` 中写入 `.aitiy` 配置目录下的
+自动更新开关，使其不再检查；并在 `pre_install` 中结束已有进程，避免
+它在安装期间自我替换。若某版本没有对应配置键，退而求其次的做法是
+在 `post_install` 里清理更新临时目录并还原被替换的文件。
+
+需要强调的是，这两种做法都依赖软件的内部实现，软件更新后可能失效——
+写清单时应当把配置键写在 `post_install` 里，而不是预置在仓库中，
+这样每次版本升级都会重新应用。
+
+### 让 Bucket 自动抓取新版
+
+仓库已内置 [Excavator](https://github.com/ScoopInstaller/Excavator) 工作流，
+定义在 `.github/workflows/excavator.yml`：每 4 小时运行一次，读取每个清单的
+`checkver` 与 `autoupdate`，检测到新版本就自动开Pull Request。
+
+启用前需要在网页端完成两步：
+
+1. **允许所有 Actions**
+   `Settings` → `Actions` → `General` → `Actions permissions`
+   → 选 `Allow all actions and reusable workflows` → `Save`
+
+2. **授予工作流读写权限**
+   `Settings` → `Actions` → `General` → `Workflow permissions`
+   → 确保选中了 `Read repository contents and packages permissions` → `Save`
+
+第二项容易被忽略：工作流声明了 `permissions: contents: write`，
+若仓库默认设为只读，开 PR 时会因权限不足而失败。
+
+也可以在 Actions 页面手动触发 `Excavator` 工作流验证一次，
+这样能尽早发现配置问题，而不必等到定时任务触发。
+
+### 禁止 Scoop 自动升级某个软件
+
+若某个软件必须停留在当前版本（例如上游刚出的新版有bug），
+用 `scoop hold`：
+
+```pwsh
+scoop hold centbrowser
+```
+
+这会在该应用的 `install.json` 中写入 `hold: true`，此后
+`scoop update *` 会跳过它。需要恢复时：
+
+```pwsh
+scoop unhold centbrowser
+```
+
+`hold` 只影响 Scoop 的更新流程，不影响应用自身的更新器——
+两者需要分别处理。

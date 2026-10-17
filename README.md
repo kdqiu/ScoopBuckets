@@ -100,3 +100,99 @@ unrelated digits instead.
 For `license`, prefer an SPDX identifier such as `MIT` or `Apache-2.0`.
 `Freeware`, `Proprietary`, `Shareware` and `Unknown` are fallbacks for when no
 standard identifier applies.
+
+## Keeping versions stable
+
+Once installed, software often keeps updating itself, or gets upgraded by
+Scoop as a side effect. These are three separate channels and each needs its
+own treatment.
+
+### Stopping an app from updating itself
+
+An app's own updater runs outside Scoop's control. Once it swaps files, the
+hash Scoop recorded no longer matches what is on disk, and the next
+`scoop update` fails outright. Available approaches, from least to most
+invasive:
+
+| Approach | When it applies | Cost |
+| --- | --- | --- |
+| Write the config key that disables update checks | The app exposes a setting | You need to know the key |
+| Delete the standalone updater | The package ships an `updater.exe` | Removing it can break the app |
+| Intercept from `pre_install` | The app only checks at startup | Runs on every install |
+| Block the network | The app only checks over HTTP | Breaks other features |
+| Clean up from `pre_uninstall` | The update already happened | After the fact |
+
+**Prefer the config key, and only touch files as a last resort.** Deleting an
+updater makes the app error on some code paths, while a config change is
+reversible and leaves the installation intact.
+
+The two manifests here differ:
+
+**Cent Browser** — Chromium based. Its FAQ states that it checks for updates
+every 6 hours, with the switch under "Other settings" → "Enable auto update of
+Cent Browser". It keeps state in `HKEY_CURRENT_USER\SOFTWARE\CentBrowser`, and
+the portable build relies on a separate `centbrowserupdater.exe`. Because the
+Chromium family also honours group policy, `post_install` can write the
+relevant policy key; the installer additionally accepts a
+`--cb-auto-update` flag.
+
+**Aitiy** — a single file app. The archive contains **only `Aitiy.exe` and
+`AitiyOcr.dll`, with no standalone updater at all**. The update check is made by
+the main binary itself, carrying an `Aitiy Update Check/1.0` user agent against
+`aitiy.com`, and results in an `UpdateTipProgress` prompt. Deleting a
+standalone updater therefore does not apply here.
+
+For Aitiy, write the auto-update switch into the settings file under the
+`.aitiy` directory from `post_install`, and stop any running instance from
+`pre_install` so it cannot replace itself mid-install. If a given release ships
+no such key, the fallback is to clear the update staging directory from
+`post_install` and restore whatever was replaced.
+
+Both approaches depend on internal implementation details and can break when
+the app changes. Write them into `post_install` rather than storing the result
+in this repository, so they are re-applied on every version bump.
+
+### Letting the bucket catch up automatically
+
+The repository already ships an
+[Excavator](https://github.com/ScoopInstaller/Excavator) workflow in
+`.github/workflows/excavator.yml`. Every four hours it reads each manifest's
+`checkver` and `autoupdate`, then opens a Pull Request when it finds a newer
+release.
+
+Two settings must be changed on the web before it can run:
+
+1. **Allow all actions**
+   `Settings` → `Actions` → `General` → `Actions permissions`
+   → select `Allow all actions and reusable workflows` → `Save`
+
+2. **Grant the workflow write access**
+   `Settings` → `Actions` → `General` → `Workflow permissions`
+   → make sure `Read repository contents and packages permissions` is
+   selected → `Save`
+
+The second one is easy to miss. The workflow declares
+`permissions: contents: write`, so if the repository defaults to read only, the
+pull request step fails for lack of permission.
+
+You can also trigger `Excavator` manually from the Actions page. That surfaces
+configuration problems right away instead of waiting for the schedule.
+
+### Stopping Scoop from upgrading an app
+
+To pin an app to its current version, for example because a fresh upstream
+release is broken:
+
+```pwsh
+scoop hold centbrowser
+```
+
+This writes `hold: true` into that app's `install.json`, after which
+`scoop update *` skips it. To undo:
+
+```pwsh
+scoop unhold centbrowser
+```
+
+`hold` only affects Scoop's own update path. It has no effect on an app's own
+updater, which is why the two need separate treatment.
