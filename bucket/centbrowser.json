@@ -1,4 +1,5 @@
 {
+    "##": "Automatic version detection is disabled on purpose so that Excavator leaves this manifest alone.",
     "homepage": "https://www.centbrowser.com/",
     "description": "The Most Feature Rich Chromium",
     "version": "5.3.1184.25",
@@ -19,19 +20,5 @@
             "Cent Browser"
         ]
     ],
-    "persist": "User Data",
-    "checkver": {
-        "url": "https://www.centbrowser.com/history.html",
-        "re": "<p id=\"[\\d.]+\">v([\\d.]+)"
-    },
-    "autoupdate": {
-        "architecture": {
-            "64bit": {
-                "url": "https://static.centbrowser.com/win_stable/$version/centbrowser_$version_x64_portable.exe#/dl.7z"
-            },
-            "32bit": {
-                "url": "https://static.centbrowser.com/win_stable/$version/centbrowser_$version_portable.exe#/dl.7z"
-            }
-        }
-    }
+    "persist": "User Data"
 }

@@ -20,6 +20,7 @@
             "Su"
         ]
     ],
+    "persist": "data",
     "checkver": {
         "url": "https://api.github.com/repos/Quorafind/Su-Releases/releases/latest",
         "regex": "\"tag_name\":\\s*\"v([\\d.]+)\""
