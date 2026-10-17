@@ -8,6 +8,7 @@
 
 | 清单 | 说明 | 版本 |
 | --- | --- | --- |
+| [aitiy](bucket/aitiy.json) | 本地优先的桌面效率工具，集成鼠标手势、智能截图、OCR、贴图、选词工具栏与屏幕边缘触发 | 1.0.11 |
 | [centbrowser](bucket/centbrowser.json) | Cent Browser — 功能最丰富的 Chromium 内核浏览器 | 5.3.1184.25 |
 
 ## 如何安装

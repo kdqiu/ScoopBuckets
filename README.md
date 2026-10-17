@@ -8,6 +8,7 @@ Personal [Scoop](https://scoop.sh) bucket for Windows command-line installer.
 
 | Manifest | Description | Version |
 | --- | --- | --- |
+| [aitiy](bucket/aitiy.json) | Local-first desktop productivity tool with mouse gestures, screenshots, OCR and screen edge triggers | 1.0.11 |
 | [centbrowser](bucket/centbrowser.json) | Cent Browser — The Most Feature Rich Chromium | 5.3.1184.25 |
 
 ## How do I install these manifests?
