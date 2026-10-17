@@ -113,9 +113,9 @@ scoop uninstall centbrowser
 
 启用前需要在网页端完成两步：
 
-1. **允许所有 Actions**  
+1. **允许所有 Actions**
 `Settings` → `Actions` → `General` → `Actions permissions`→ 选 `Allow all actions and reusable workflows` → `Save`
-2. **授予工作流读写权限**  
+2. **授予工作流读写权限**
 `Settings` → `Actions` → `General` → `Workflow permissions`→ 确保选中了 `Read repository contents and packages permissions` → `Save`
 
 第二项容易被忽略：工作流声明了 `permissions: contents: write`，若仓库默认设为只读，开 PR 时会因权限不足而失败。
