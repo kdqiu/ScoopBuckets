@@ -26,6 +26,7 @@ Manifests live in **buckets**. `main` and `extras` are the official ones and are
 | --- | --- | --- | --- | --- |
 | [aitiy](bucket/aitiy.json) | Local-first desktop productivity tool with mouse gestures, screenshots, OCR and screen edge triggers | 1.0.11 | Portable | Write a config key |
 | [centbrowser](bucket/centbrowser.json) | Cent Browser — The Most Feature Rich Chromium | 5.3.1184.25 | Portable | Write a config key |
+| [su](bucket/su.json) | Su — native-rendered Markdown notes app with handwriting, canvas and edit history | 1.17.0 | Portable | Write a config key |
 
 ## Install
 
