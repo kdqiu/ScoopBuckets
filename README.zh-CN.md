@@ -69,26 +69,28 @@ scoop uninstall centbrowser
 | `homepage` | 是 | 项目主页。 |
 | `url` | 是 | 下载地址。应指向具体文件，而不是「最新版本」页面。 |
 | `hash` | 是 | 下载文件的 SHA256。不一致时 Scoop 会拒绝安装。 |
+| `license` | 否 | 许可证标识或名称，如 `Freeware`。 |
+| `notes` | 否 | 安装后显示的补充说明。 |
 | `architecture` | 否 | 当不同架构的安装包不同时使用，如 `"64bit": { "url": …, "hash": … }`。 |
+| `depends` | 否 | 需要预先安装的其他清单，如 `"depends": "extras/vcredist2022"`。 |
+| `suggest` | 否 | 安装后推荐的相关软件，不会实际安装。 |
+| `bin` | 否 | 需要加入 PATH 的可执行文件。 |
+| `env_add_path` | 否 | 需要前置到 PATH 的目录。 |
 | `shortcuts` | 否 | 开始菜单与桌面快捷方式，格式为 `[可执行文件, 名称]`。 |
 | `persist` | 否 | 升级时保留的目录，如用户配置。 |
+| `pre_install` | 否 | 解压文件前执行的 PowerShell，常用于结束正在运行的进程。 |
+| `post_install` | 否 | 解压后执行的 PowerShell，如写入配置文件。 |
+| `pre_uninstall` | 否 | 卸载前执行的 PowerShell。 |
+| `post_uninstall` | 否 | 卸载后执行的 PowerShell。 |
+| `uninstaller` | 否 | `scoop uninstall` 时执行的脚本。 |
 | `checkver` | 否 | 在哪里查新版本，附一个提取版本号的 `regex`。 |
 | `autoupdate` | 否 | 新版本发布时用于重写 `url` 与 `hash` 的模板。 |
 
-### 自动更新
+### 更新与卸载
 
 `checkver` 抓取一个 URL 并用正则提取最新版本号，`autoupdate` 再把它代入
 `url` 并刷新哈希。请把 `checkver` 指向**以纯文本包含版本号**的页面——如果页面
 是用 JavaScript 动态生成的，抓取时看不到版本号，正则很可能匹配到无关的数字。
 
-### 推送前先自查
-
-在仓库根目录执行以下命令。注意每个脚本都会扫描整个 `bucket/` 目录：
-
-```pwsh
-.\bin\formatjson.ps1
-.\bin\checkver.ps1
-.\bin\checkurls.ps1
-```
-
-推送会触发 CI，它会校验每一个清单；像缺少末尾换行这类格式问题都会导致构建失败。
+`license` 优先使用 SPDX 标识符，如 `MIT`、`Apache-2.0`。`Freeware`、`Proprietary`、
+`Shareware`、`Unknown` 只在没有合适标准标识符时作为兜底值使用。

@@ -72,13 +72,24 @@ or write the file from scratch. The minimal shape is four fields:
 | `homepage` | yes | Project page. |
 | `url` | yes | Download location. Point at a specific file, not a "latest" page. |
 | `hash` | yes | SHA256 of the downloaded file. Scoop refuses to install on a mismatch. |
+| `license` | no | License identifier or name, e.g. `Freeware`. |
+| `notes` | no | Extra lines shown after installation. |
 | `architecture` | no | Use when a build differs per architecture, e.g. `"64bit": { "url": …, "hash": … }`. |
+| `depends` | no | Other manifests required first, e.g. `"depends": "extras/vcredist2022"`. |
+| `suggest` | no | Related apps offered after install. Does not pull anything in. |
+| `bin` | no | Executables to expose on the PATH. |
+| `env_add_path` | no | Directories to prepend to the PATH. |
 | `shortcuts` | no | Start Menu and desktop entries, as `[executable, name]` pairs. |
 | `persist` | no | Folders kept across upgrades, e.g. user settings. |
+| `pre_install` | no | PowerShell run before files are laid down. Use it to stop a running instance. |
+| `post_install` | no | PowerShell run after extraction, e.g. to write config files. |
+| `pre_uninstall` | no | PowerShell run before removal. |
+| `post_uninstall` | no | PowerShell run after removal. |
+| `uninstaller` | no | Script to run on `scoop uninstall`. |
 | `checkver` | no | Where to find new versions, plus a `regex` to extract the number. |
 | `autoupdate` | no | Template for rewriting `url` and `hash` on a new release. |
 
-### Updating automatically
+### Update and removal
 
 `checkver` fetches a URL and applies a regex to pull out the latest version.
 `autoupdate` then substitutes it into `url` and refreshes the hash. Point
@@ -86,16 +97,6 @@ or write the file from scratch. The minimal shape is four fields:
 builds it in JavaScript, the fetch will not see it and the regex may match
 unrelated digits instead.
 
-### Verify before pushing
-
-Run these from the repository root. Note that each script scans the whole
-`bucket/` directory:
-
-```pwsh
-.\bin\formatjson.ps1
-.\bin\checkver.ps1
-.\bin\checkurls.ps1
-```
-
-A push triggers CI, which validates every manifest and fails the build on a
-formatting problem such as a missing trailing newline.
+For `license`, prefer an SPDX identifier such as `MIT` or `Apache-2.0`.
+`Freeware`, `Proprietary`, `Shareware` and `Unknown` are fallbacks for when no
+standard identifier applies.
