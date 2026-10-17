@@ -1,4 +1,4 @@
-# ScoopBuckets
+# scoop-kdqiu
 
 [简体中文](README.zh-CN.md) | English
 
@@ -16,8 +16,8 @@ Personal [Scoop](https://scoop.sh) bucket for Windows command-line installer.
 Add the bucket, then install by manifest name:
 
 ```pwsh
-scoop bucket add ScoopBuckets https://github.com/kdqiu/ScoopBuckets
-scoop install ScoopBuckets/centbrowser
+scoop bucket add scoop-kdqiu https://github.com/kdqiu/scoop-kdqiu
+scoop install scoop-kdqiu/centbrowser
 ```
 
 To uninstall:
