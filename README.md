@@ -126,10 +126,13 @@ invasive:
 updater makes the app error on some code paths, while a config change is
 reversible and leaves the installation intact.
 
-Both manifests in this repository are portable builds that expose a setting
-for turning off update checks, so writing the config key is enough and no file
-needs to be removed. Put the key in `post_install` rather than storing it in
-this repository, so it is re-applied on every version bump.
+Both manifests in this repository are portable builds. For a portable app, or
+one that can be installed in a portable way, writing the auto-update config
+key is enough and no file needs to be removed. There are two ways to apply it:
+set the key from `post_install`, or switch it off manually once after install.
+
+Put the config key in `post_install` rather than storing it in this
+repository, so it is re-applied on every version bump.
 
 ### Letting the bucket catch up automatically
 

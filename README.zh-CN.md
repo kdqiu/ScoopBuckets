@@ -115,15 +115,17 @@ scoop uninstall centbrowser
 **优先用配置项，其次才动文件。** 删除更新程序会让应用在某些路径下报错，
 而配置项是可逆的、不会破坏安装完整性。
 
-本仓库当前的两个清单都是便携版，且都提供关闭自动更新的配置项，
-因此写配置项即可，无需删除任何文件。配置键应写在 `post_install` 里
-而不是预置在仓库中，这样每次版本升级都会重新应用。
+本仓库当前的两个清单都是便携版。对便携版，或可以按便携方式安装的软件，
+采用关闭自动更新的配置项即可，无需删除任何文件。关闭方式有两种：
+在 `post_install` 中写入配置项，或安装后手动关闭一次。
+
+配置键应写在 `post_install` 里而不是预置在仓库中，这样每次版本升级都会重新应用。
 
 ### 让 Bucket 自动抓取新版
 
 仓库已内置 [Excavator](https://github.com/ScoopInstaller/Excavator) 工作流，
 定义在 `.github/workflows/excavator.yml`：每 4 小时运行一次，读取每个清单的
-`checkver` 与 `autoupdate`，检测到新版本就自动开Pull Request。
+`checkver` 与 `autoupdate`，检测到新版本就自动开 Pull Request。
 
 启用前需要在网页端完成两步：
 
@@ -143,7 +145,7 @@ scoop uninstall centbrowser
 
 ### 禁止 Scoop 自动升级某个软件
 
-若某个软件必须停留在当前版本（例如上游刚出的新版有bug），
+若某个软件必须停留在当前版本（例如上游刚出的新版有 bug），
 用 `scoop hold`：
 
 ```pwsh
