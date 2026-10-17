@@ -30,10 +30,10 @@ next to the shared ones without touching the official entries.
 
 ## Available manifests
 
-| Manifest | Description | Version |
-| --- | --- | --- |
-| [aitiy](bucket/aitiy.json) | Local-first desktop productivity tool with mouse gestures, screenshots, OCR and screen edge triggers | 1.0.11 |
-| [centbrowser](bucket/centbrowser.json) | Cent Browser — The Most Feature Rich Chromium | 5.3.1184.25 |
+| Manifest | Description | Version | Type | Stop self-update |
+| --- | --- | --- | --- | --- |
+| [aitiy](bucket/aitiy.json) | Local-first desktop productivity tool with mouse gestures, screenshots, OCR and screen edge triggers | 1.0.11 | Portable | Write a config key |
+| [centbrowser](bucket/centbrowser.json) | Cent Browser — The Most Feature Rich Chromium | 5.3.1184.25 | Portable | Write a config key |
 
 ## Install
 
@@ -126,31 +126,10 @@ invasive:
 updater makes the app error on some code paths, while a config change is
 reversible and leaves the installation intact.
 
-The two manifests here differ:
-
-**Cent Browser** — Chromium based. Its FAQ states that it checks for updates
-every 6 hours, with the switch under "Other settings" → "Enable auto update of
-Cent Browser". It keeps state in `HKEY_CURRENT_USER\SOFTWARE\CentBrowser`, and
-the portable build relies on a separate `centbrowserupdater.exe`. Because the
-Chromium family also honours group policy, `post_install` can write the
-relevant policy key; the installer additionally accepts a
-`--cb-auto-update` flag.
-
-**Aitiy** — a single file app. The archive contains **only `Aitiy.exe` and
-`AitiyOcr.dll`, with no standalone updater at all**. The update check is made by
-the main binary itself, carrying an `Aitiy Update Check/1.0` user agent against
-`aitiy.com`, and results in an `UpdateTipProgress` prompt. Deleting a
-standalone updater therefore does not apply here.
-
-For Aitiy, write the auto-update switch into the settings file under the
-`.aitiy` directory from `post_install`, and stop any running instance from
-`pre_install` so it cannot replace itself mid-install. If a given release ships
-no such key, the fallback is to clear the update staging directory from
-`post_install` and restore whatever was replaced.
-
-Both approaches depend on internal implementation details and can break when
-the app changes. Write them into `post_install` rather than storing the result
-in this repository, so they are re-applied on every version bump.
+Both manifests in this repository are portable builds that expose a setting
+for turning off update checks, so writing the config key is enough and no file
+needs to be removed. Put the key in `post_install` rather than storing it in
+this repository, so it is re-applied on every version bump.
 
 ### Letting the bucket catch up automatically
 

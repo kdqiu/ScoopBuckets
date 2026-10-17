@@ -27,10 +27,10 @@ scoop install centbrowser
 
 ## 可用清单
 
-| 清单 | 说明 | 版本 |
-| --- | --- | --- |
-| [aitiy](bucket/aitiy.json) | 本地优先的桌面效率工具，集成鼠标手势、智能截图、OCR、贴图、选词工具栏与屏幕边缘触发 | 1.0.11 |
-| [centbrowser](bucket/centbrowser.json) | Cent Browser — 功能最丰富的 Chromium 内核浏览器 | 5.3.1184.25 |
+| 清单 | 说明 | 版本 | 类型 | 阻止自更新 |
+| --- | --- | --- | --- | --- |
+| [aitiy](bucket/aitiy.json) | 本地优先的桌面效率工具，集成鼠标手势、智能截图、OCR、贴图、选词工具栏与屏幕边缘触发 | 1.0.11 | 便携版 | 写配置项 |
+| [centbrowser](bucket/centbrowser.json) | Cent Browser — 功能最丰富的 Chromium 内核浏览器 | 5.3.1184.25 | 便携版 | 写配置项 |
 
 ## 安装
 
@@ -115,28 +115,9 @@ scoop uninstall centbrowser
 **优先用配置项，其次才动文件。** 删除更新程序会让应用在某些路径下报错，
 而配置项是可逆的、不会破坏安装完整性。
 
-针对本仓库的两个清单，实际情况不同：
-
-**Cent Browser** — Chromium 内核，官方 FAQ 明确：每 6 小时检查一次更新，
-设置位于「其他设置」→「自动更新 Cent Browser」。它会写注册表
-`HKEY_CURRENT_USER\SOFTWARE\CentBrowser`，便携版则另有
-`centbrowserupdater.exe` 负责更新。由于 Chromium 系还支持组策略，
-用 `post_install` 写入 `Local State` 的 `browser.enabled_labs_experiments`
-或注册表策略键更稳妥；若使用安装版，还提供了 `--cb-auto-update` 参数。
-
-**Aitiy** — 单文件应用，安装包内**只有 `Aitiy.exe` 与 `AitiyOcr.dll`，
-不含任何独立更新程序**。更新检查由主程序自身发起（请求带
-`Aitiy Update Check/1.0` 标识，指向 `aitiy.com`），并有 `UpdateTipProgress`
-更新提示界面。因此「删除独立更新程序」这一手段对它不适用。
-
-对 Aitiy 有效的做法是：在 `post_install` 中写入 `.aitiy` 配置目录下的
-自动更新开关，使其不再检查；并在 `pre_install` 中结束已有进程，避免
-它在安装期间自我替换。若某版本没有对应配置键，退而求其次的做法是
-在 `post_install` 里清理更新临时目录并还原被替换的文件。
-
-需要强调的是，这两种做法都依赖软件的内部实现，软件更新后可能失效——
-写清单时应当把配置键写在 `post_install` 里，而不是预置在仓库中，
-这样每次版本升级都会重新应用。
+本仓库当前的两个清单都是便携版，且都提供关闭自动更新的配置项，
+因此写配置项即可，无需删除任何文件。配置键应写在 `post_install` 里
+而不是预置在仓库中，这样每次版本升级都会重新应用。
 
 ### 让 Bucket 自动抓取新版
 
